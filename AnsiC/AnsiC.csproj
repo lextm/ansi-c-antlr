@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Lextm.AnsiC</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4">
+      <Version>4.6.5</Version>
+    </PackageReference>
+    <PackageReference Include="Antlr4.Runtime">
+      <Version>4.6.5</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Antlr4 Include="C.g4" />
+  </ItemGroup>
+
+</Project>
