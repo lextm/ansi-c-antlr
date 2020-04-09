@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Atn;
@@ -60,11 +61,89 @@ namespace Lextm.AnsiC
             }
         }
 
-        class TranslationUnitVisitor : CBaseVisitor<TranslationUnit>
+        class TranslationUnitVisitor : CBaseVisitor<List<ExternalDelaration>>
         {
-            public override TranslationUnit VisitTranslationUnit([NotNull] TranslationUnitContext translationUnit)
+            public override List<ExternalDelaration> VisitTranslationUnit([NotNull] TranslationUnitContext context)
             {
-                throw new NotImplementedException();
+                var nestUnit = context.translationUnit();
+                var visitor = new ExternalDeclarationVisitor();
+                var externalDeclaration = visitor.VisitExternalDeclaration(context.externalDeclaration());
+                if (nestUnit == null)
+                {
+                    return new List<ExternalDelaration> { externalDeclaration };
+                }
+
+                var result = VisitTranslationUnit(nestUnit);
+                result.Add(externalDeclaration);
+                return result;
+            }
+        }
+
+        class ExternalDeclarationVisitor : CBaseVisitor<ExternalDelaration>
+        {
+            public override ExternalDelaration VisitExternalDeclaration([NotNull] ExternalDeclarationContext context)
+            {
+                var function = context.functionDefinition();
+                if (function != null)
+                {
+                    var functionVisitor = new FunctionDefinitionVisitor();
+                    return new ExternalDelaration(functionVisitor.VisitFunctionDefinition(function));
+                }
+
+                var declaration = context.declaration();
+                if (declaration == null)
+                {
+                    return null;
+                }
+
+                var declarationVisitor = new DeclarationVisitor();
+                return new ExternalDelaration(declarationVisitor.VisitDeclaration(declaration));
+            }
+        }
+
+        class FunctionDefinitionVisitor : CBaseVisitor<FunctionDefinition>
+        {
+            public override FunctionDefinition VisitFunctionDefinition([NotNull] FunctionDefinitionContext context)
+            {
+                var declarator = new DeclaratorVisitor();
+                return new FunctionDefinition(declarator.VisitDeclarator(context.declarator()));
+            }
+        }
+
+        class DeclarationVisitor : CBaseVisitor<Declaration>
+        {
+            public override Declaration VisitDeclaration([NotNull] DeclarationContext context)
+            {
+                return base.VisitDeclaration(context);
+            }
+        }
+
+        internal class DeclaratorVisitor : CBaseVisitor<Declarator>
+        {
+            public override Declarator VisitDeclarator([NotNull] DeclaratorContext context)
+            {
+                var visitor = new DirectDeclaratorVisitor();
+                return new Declarator(visitor.VisitDirectDeclarator(context.directDeclarator()));
+            }
+        }
+
+        internal class DirectDeclaratorVisitor : CBaseVisitor<DirectDeclarator>
+        {
+            public override DirectDeclarator VisitDirectDeclarator([NotNull] DirectDeclaratorContext context)
+            {
+                var identifier = context.Identifier();
+                if (identifier != null)
+                {
+                    return new DirectDeclarator(identifier.ToString());
+                }
+
+                var nest = context.directDeclarator();
+                if (nest != null)
+                {
+                    return VisitDirectDeclarator(nest);
+                }
+
+                return base.VisitDirectDeclarator(context);
             }
         }
     }

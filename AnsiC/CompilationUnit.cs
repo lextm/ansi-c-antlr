@@ -1,14 +1,20 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Lextm.AnsiC
 {
     public class CompilationUnit
     {
-        internal void Handle(TranslationUnit unit)
+        public IList<FunctionDefinition> Functions { get; } = new List<FunctionDefinition>();
+
+        internal void Handle(List<ExternalDelaration> declarations)
         {
-            throw new NotImplementedException();
+            foreach (var declaration in declarations)
+            {
+                if (declaration.FunctionDefinition != null)
+                {
+                    Functions.Add(declaration.FunctionDefinition);
+                }
+            }
         }
     }
 }
