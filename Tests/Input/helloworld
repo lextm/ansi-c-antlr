@@ -1,8 +1,10 @@
 #include <stdio.h>
 
 int main() {
-    printf("Hello, World!");
-    return test(-1);
+    int result, code = 1;
+    printf("Hello, World!\n");
+    result = -1 + code;
+    return test(result);
 }
 
 int test(short error) {

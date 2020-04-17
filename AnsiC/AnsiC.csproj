@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="CLexer.g4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Antlr4">
       <Version>4.6.5</Version>
     </PackageReference>
@@ -14,7 +18,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Antlr4 Include="C.g4" />
+    <Antlr4 Update="CLexer.g4">
+      <DefaultCustomToolNamespace>$([MSBuild]::ValueOrDefault('$(RootNamespace).%(DefaultCustomToolNamespace)', '').TrimEnd('.'))</DefaultCustomToolNamespace>
+      <CustomToolNamespace>$([MSBuild]::ValueOrDefault(%(CustomToolNamespace), %(DefaultCustomToolNamespace)))</CustomToolNamespace>
+    </Antlr4>
   </ItemGroup>
 
 </Project>

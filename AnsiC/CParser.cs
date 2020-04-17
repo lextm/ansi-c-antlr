@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Atn;
@@ -29,24 +28,40 @@ namespace Lextm.AnsiC
                 var lexer = new CLexer(new AntlrInputStream('\n' + text));
                 var tokens = new CommonTokenStream(lexer);
                 var parser = new CParser(tokens);
-                CompilationUnitVisitor visitor = new CompilationUnitVisitor();
+                CompilationUnitVisitor visitor = new CompilationUnitVisitor(tokens);
                 return visitor.Visit(parser.compilationUnit());
             }
-            catch (RecognitionException ex)
+            catch (RecognitionException)
             {
                 return null;
             }
-            catch (ParseCanceledException ex)
+            catch (ParseCanceledException)
             {
                 return null;
             }
         }
 
-        class CompilationUnitVisitor : CBaseVisitor<CompilationUnit>
+        class CompilationUnitVisitor : CParserBaseVisitor<CompilationUnit>
         {
+            private CommonTokenStream tokens;
+
+            public CompilationUnitVisitor(CommonTokenStream tokens)
+            {
+                this.tokens = tokens;
+            }
+
             public override CompilationUnit VisitCompilationUnit([NotNull] CompilationUnitContext context)
             {
                 var result = new CompilationUnit();
+
+                var start = context.Start;
+                var index = start.TokenIndex;
+                var channel = tokens.GetHiddenTokensToLeft(index, CLexer.INCLUDE);
+                if (channel != null)
+                {
+                    result.Process(channel);
+                }
+
                 var translationUnit = context.translationUnit();
                 if (translationUnit == null)
                 {
@@ -61,7 +76,7 @@ namespace Lextm.AnsiC
             }
         }
 
-        class TranslationUnitVisitor : CBaseVisitor<List<ExternalDelaration>>
+        class TranslationUnitVisitor : CParserBaseVisitor<List<ExternalDelaration>>
         {
             public override List<ExternalDelaration> VisitTranslationUnit([NotNull] TranslationUnitContext context)
             {
@@ -79,7 +94,7 @@ namespace Lextm.AnsiC
             }
         }
 
-        class ExternalDeclarationVisitor : CBaseVisitor<ExternalDelaration>
+        class ExternalDeclarationVisitor : CParserBaseVisitor<ExternalDelaration>
         {
             public override ExternalDelaration VisitExternalDeclaration([NotNull] ExternalDeclarationContext context)
             {
@@ -101,24 +116,140 @@ namespace Lextm.AnsiC
             }
         }
 
-        class FunctionDefinitionVisitor : CBaseVisitor<FunctionDefinition>
+        class FunctionDefinitionVisitor : CParserBaseVisitor<FunctionDefinition>
         {
             public override FunctionDefinition VisitFunctionDefinition([NotNull] FunctionDefinitionContext context)
             {
                 var declarator = new DeclaratorVisitor();
-                return new FunctionDefinition(declarator.VisitDeclarator(context.declarator()));
+                var statement = new CompoundStatementVisitor();
+                return new FunctionDefinition(declarator.VisitDeclarator(context.declarator()),
+                    statement.VisitCompoundStatement(context.compoundStatement()));
             }
         }
 
-        class DeclarationVisitor : CBaseVisitor<Declaration>
+        class CompoundStatementVisitor : CParserBaseVisitor<CompoundStatement>
+        {
+            public override CompoundStatement VisitCompoundStatement([NotNull] CompoundStatementContext context)
+            {
+                var list = new BlockItemListVisitor();
+                if (context.blockItemList() != null)
+                {
+                    return new CompoundStatement(list.VisitBlockItemList(context.blockItemList()));
+                }
+
+                return new CompoundStatement();
+            }
+        }
+
+        class BlockItemListVisitor : CParserBaseVisitor<List<IBlockItem>>
+        {
+            public override List<IBlockItem> VisitBlockItemList([NotNull] BlockItemListContext context)
+            {
+                var result = new List<IBlockItem>();
+                var list = context.blockItemList();
+                if (list != null)
+                {
+                    result.AddRange(VisitBlockItemList(list));
+                }
+
+                result.Add(new BlockItemVisitor().VisitBlockItem(context.blockItem()));
+                return result;
+            }
+        }
+
+        class BlockItemVisitor : CParserBaseVisitor<IBlockItem>
+        {
+            public override IBlockItem VisitBlockItem([NotNull] BlockItemContext context)
+            {
+                var declaration = context.declaration();
+                if (declaration != null)
+                {
+                    return new DeclarationVisitor().VisitDeclaration(declaration);
+                }
+
+                return new StatementVisitor().VisitStatement(context.statement());
+            }
+        }
+
+        class StatementVisitor : CParserBaseVisitor<Statement>
+        {
+            public override Statement VisitStatement([NotNull] StatementContext context)
+            {
+                return base.VisitStatement(context);
+            }
+        }
+
+        class DeclarationVisitor : CParserBaseVisitor<Declaration>
         {
             public override Declaration VisitDeclaration([NotNull] DeclarationContext context)
             {
-                return base.VisitDeclaration(context);
+                var staticAssertDeclaration = context.staticAssertDeclaration();
+                if (staticAssertDeclaration != null)
+                {
+                    return base.VisitStaticAssertDeclaration(staticAssertDeclaration);
+                }
+
+                var specifiers = new DeclarationSpecifiersVisitor().VisitDeclarationSpecifiers(context.declarationSpecifiers());
+                var initDeclaratorList = context.initDeclaratorList();
+                if (initDeclaratorList != null)
+                {
+                    var visitor = new InitDeclarationListVisitor();
+                    return new Declaration(specifiers, 
+                        visitor.VisitInitDeclaratorList(initDeclaratorList));
+                }
+
+                return new Declaration(specifiers);
             }
         }
 
-        internal class DeclaratorVisitor : CBaseVisitor<Declarator>
+        internal class InitDeclarationListVisitor : CParserBaseVisitor<List<InitDeclarator>>
+        {
+            public override List<InitDeclarator> VisitInitDeclaratorList([NotNull] InitDeclaratorListContext context)
+            {
+                var result = new List<InitDeclarator>();
+                var list = context.initDeclaratorList();
+                if (list != null)
+                {
+                    result.AddRange(VisitInitDeclaratorList(list));
+                }
+
+                result.Add(new InitDeclaratorVisitor().VisitInitDeclarator(context.initDeclarator()));
+                return result;
+            }
+        }
+
+        internal class InitDeclaratorVisitor : CParserBaseVisitor<InitDeclarator>
+        {
+            public override InitDeclarator VisitInitDeclarator([NotNull] InitDeclaratorContext context)
+            {
+                return new InitDeclarator(new DeclaratorVisitor().VisitDeclarator(context.declarator()));
+            }
+        }
+
+        internal class DeclarationSpecifiersVisitor : CParserBaseVisitor<List<DeclarationSpecifier>>
+        {
+            public override List<DeclarationSpecifier> VisitDeclarationSpecifiers([NotNull] DeclarationSpecifiersContext context)
+            {
+                var result = new List<DeclarationSpecifier>();
+                var visitor = new DeclarationSpecifierVisitor();
+                foreach (var specifier in context.declarationSpecifier())
+                {
+                    result.Add(visitor.VisitDeclarationSpecifier(specifier));
+                }
+
+                return result;
+            }
+        }
+
+        internal class DeclarationSpecifierVisitor : CParserBaseVisitor<DeclarationSpecifier>
+        {
+            public override DeclarationSpecifier VisitDeclarationSpecifier([NotNull] DeclarationSpecifierContext context)
+            {
+                return new DeclarationSpecifier(context.ToString());
+            }
+        }
+
+        internal class DeclaratorVisitor : CParserBaseVisitor<Declarator>
         {
             public override Declarator VisitDeclarator([NotNull] DeclaratorContext context)
             {
@@ -127,7 +258,7 @@ namespace Lextm.AnsiC
             }
         }
 
-        internal class DirectDeclaratorVisitor : CBaseVisitor<DirectDeclarator>
+        internal class DirectDeclaratorVisitor : CParserBaseVisitor<DirectDeclarator>
         {
             public override DirectDeclarator VisitDirectDeclarator([NotNull] DirectDeclaratorContext context)
             {
