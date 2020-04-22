@@ -2,5 +2,6 @@
 {
     public interface IBlockItem
     {
+        Scope Scope { get; }
     }
 }

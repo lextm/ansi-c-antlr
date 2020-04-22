@@ -132,12 +132,16 @@ namespace Lextm.AnsiC
             public override CompoundStatement VisitCompoundStatement([NotNull] CompoundStatementContext context)
             {
                 var list = new BlockItemListVisitor();
+                var scope = new Scope {
+                    Start = new Position { Line = context.Start.Line, Character = context.Start.Column },
+                    End = new Position { Line = context.Stop.Line, Character = context.Stop.Column }
+                };
                 if (context.blockItemList() != null)
                 {
-                    return new CompoundStatement(list.VisitBlockItemList(context.blockItemList()));
+                    return new CompoundStatement(list.VisitBlockItemList(context.blockItemList()), scope);
                 }
 
-                return new CompoundStatement();
+                return new CompoundStatement(scope);
             }
         }
 
@@ -175,7 +179,11 @@ namespace Lextm.AnsiC
         {
             public override Statement VisitStatement([NotNull] StatementContext context)
             {
-                return base.VisitStatement(context);
+                return new Statement(new Scope 
+                {
+                    Start = new Position { Line = context.Start.Line, Character = context.Start.Column },
+                    End = new Position { Line = context.Stop.Line, Character = context.Stop.Column }
+                });
             }
         }
 
@@ -195,10 +203,10 @@ namespace Lextm.AnsiC
                 {
                     var visitor = new InitDeclarationListVisitor();
                     return new Declaration(specifiers, 
-                        visitor.VisitInitDeclaratorList(initDeclaratorList));
+                        visitor.VisitInitDeclaratorList(initDeclaratorList), new Scope());
                 }
 
-                return new Declaration(specifiers);
+                return new Declaration(specifiers, new Scope());
             }
         }
 

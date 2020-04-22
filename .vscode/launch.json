@@ -29,7 +29,7 @@
             "request": "launch",
             "input": "Tests/Input/helloworld",
             "grammar": "AnsiC/CParser.g4",
-            "startRule": "start",
+            "startRule": "compilationUnit",
             "printParseTree": true,
             "visualParseTree": true
         }

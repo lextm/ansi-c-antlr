@@ -5,15 +5,17 @@ namespace Lextm.AnsiC
     public class CompoundStatement
     {
         public List<IBlockItem> Lists { get; }
+        public Scope Scope { get; }
 
-        public CompoundStatement(List<IBlockItem> lists)
+        public CompoundStatement(List<IBlockItem> lists, Scope scope)
         {
             Lists = lists;
+            Scope = scope;
         }
 
-        public CompoundStatement()
+        public CompoundStatement(Scope scope)
+        : this(new List<IBlockItem>(), scope)
         {
-            Lists = new List<IBlockItem>();
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Antlr4.Runtime;
-using System;
+using LanguageServer.VsCode.Contracts;
 using System.Collections.Generic;
 
 namespace Lextm.AnsiC
@@ -33,9 +33,21 @@ namespace Lextm.AnsiC
             return false;
         }
 
-        public bool TriggerMethodNames(int line, int character)
+        public bool TriggerMethodNames(int line, int character, List<CompletionItem> items)
         {
-            return true;
+            var found = false;
+            foreach (var method in Functions)
+            {
+                items.Add(new CompletionItem(method.Name, CompletionItemKind.Method, null));
+                if (found)
+                {
+                    continue;
+                }
+
+                found |= method.TriggerMethodNames(line, character, items);
+            }
+
+            return found;
         }
     }
 }
