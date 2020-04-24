@@ -171,7 +171,13 @@ namespace Lextm.AnsiC
                     return new DeclarationVisitor().VisitDeclaration(declaration);
                 }
 
-                return new StatementVisitor().VisitStatement(context.statement());
+                var statement = context.statement();
+                if (statement != null)
+                {
+                    return new StatementVisitor().VisitStatement(statement);
+                }
+
+                return new BrokenBlock(new Scope());
             }
         }
 
@@ -197,16 +203,22 @@ namespace Lextm.AnsiC
                     return base.VisitStaticAssertDeclaration(staticAssertDeclaration);
                 }
 
-                var specifiers = new DeclarationSpecifiersVisitor().VisitDeclarationSpecifiers(context.declarationSpecifiers());
-                var initDeclaratorList = context.initDeclaratorList();
-                if (initDeclaratorList != null)
+                var specifiersContext = context.declarationSpecifiers();
+                if (specifiersContext != null)
                 {
-                    var visitor = new InitDeclarationListVisitor();
-                    return new Declaration(specifiers, 
-                        visitor.VisitInitDeclaratorList(initDeclaratorList), new Scope());
+                    var specifiers = new DeclarationSpecifiersVisitor().VisitDeclarationSpecifiers(specifiersContext);
+                    var initDeclaratorList = context.initDeclaratorList();
+                    if (initDeclaratorList != null)
+                    {
+                        var visitor = new InitDeclarationListVisitor();
+                        return new Declaration(specifiers,
+                            visitor.VisitInitDeclaratorList(initDeclaratorList), new Scope());
+                    }
+
+                    return new Declaration(specifiers, new Scope());
                 }
 
-                return new Declaration(specifiers, new Scope());
+                return new Declaration(new Scope());
             }
         }
 

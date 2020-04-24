@@ -4,6 +4,11 @@ namespace Lextm.AnsiC
 {
     internal class Declaration : IBlockItem
     {
+        public Declaration(Scope scope)
+            : this(new List<DeclarationSpecifier>(), scope)
+        {
+        }
+
         public Declaration(List<DeclarationSpecifier> specifiers, Scope scope)
             : this(specifiers, null, scope)
         {

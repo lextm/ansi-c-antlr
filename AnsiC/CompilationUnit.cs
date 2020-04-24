@@ -44,7 +44,7 @@ namespace Lextm.AnsiC
                     continue;
                 }
 
-                found |= method.TriggerMethodNames(line, character, items);
+                found |= method.TriggerLocalVariables(line, character, items);
             }
 
             return found;

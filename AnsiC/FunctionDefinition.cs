@@ -25,7 +25,7 @@ namespace Lextm.AnsiC
         public Scope BodyScope { get; }
         public IList<string> LocalVariables { get; } = new List<string>();
 
-        internal bool TriggerMethodNames(int line, int character, List<CompletionItem> items)
+        internal bool TriggerLocalVariables(int line, int character, List<CompletionItem> items)
         {
             // TODO: should remove {} from scope.
             var inScope = BodyScope.InScope(line, character);
