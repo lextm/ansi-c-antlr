@@ -57,9 +57,10 @@ namespace Lextm.ReStructuredText.LanguageServer
                     new CompletionItem(_.Key, CompletionItemKind.Text, _.Value, null)), true);
             }
 
-            if (document.TriggerMethodNames(position.Line, position.Character))
+            var items = new List<CompletionItem>();
+            if (document.TriggerCompletion(position.Line, position.Character, items))
             {
-                return new CompletionList(document.Functions.Select(_ => new CompletionItem(_.Name, CompletionItemKind.Function, _.Name, null)), true);
+                return new CompletionList(items, true);
             }
 
             return new CompletionList();

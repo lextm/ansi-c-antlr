@@ -33,7 +33,7 @@ namespace Lextm.AnsiC
             return false;
         }
 
-        public bool TriggerMethodNames(int line, int character, List<CompletionItem> items)
+        public bool TriggerCompletion(int line, int character, List<CompletionItem> items)
         {
             var found = false;
             foreach (var method in Functions)
