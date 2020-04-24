@@ -14,9 +14,9 @@ namespace Lextm.AnsiC.Tests
             Assert.Equal(2, document.Functions.Count);
             FunctionDefinition main = document.Functions[0];
             Assert.Equal("main", main.Name);
-            Assert.Equal(2, main.LocalVariables.Count);
-            Assert.Equal("result", main.LocalVariables[0]);
-            Assert.Equal("code", main.LocalVariables[1]);
+            Assert.Equal(3, main.LocalVariables.Count);
+            Assert.Equal("result", main.LocalVariables[0].Name);
+            Assert.Equal("code", main.LocalVariables[1].Name);
             Assert.Equal("test", document.Functions[1].Name);
             Assert.Empty(document.Functions[1].LocalVariables);
 
@@ -29,7 +29,19 @@ namespace Lextm.AnsiC.Tests
             {
                 var items = new List<CompletionItem>();
                 Assert.True(document.TriggerCompletion(5, 5, items));
+                Assert.Equal(2, items.Count);
+            }
+
+            {
+                var items = new List<CompletionItem>();
+                Assert.True(document.TriggerCompletion(7, 5, items));
                 Assert.Equal(4, items.Count);
+            }
+
+            {
+                var items = new List<CompletionItem>();
+                Assert.True(document.TriggerCompletion(9, 5, items));
+                Assert.Equal(5, items.Count);
             }
         }
     }

@@ -15,7 +15,7 @@ namespace Lextm.AnsiC
                 {
                     foreach (var variable in declaration.Declarators)
                     {
-                        LocalVariables.Add(variable.Name);
+                        LocalVariables.Add(new LocalVariable(variable, BodyScope));
                     }
                 }
             }
@@ -23,7 +23,7 @@ namespace Lextm.AnsiC
 
         public string Name { get; }
         public Scope BodyScope { get; }
-        public IList<string> LocalVariables { get; } = new List<string>();
+        public IList<LocalVariable> LocalVariables { get; } = new List<LocalVariable>();
 
         internal bool TriggerLocalVariables(int line, int character, List<CompletionItem> items)
         {
@@ -33,7 +33,10 @@ namespace Lextm.AnsiC
             {
                 foreach (var local in LocalVariables)
                 {
-                    items.Add(new CompletionItem(local, CompletionItemKind.Variable, null));
+                    if (local.Scope.InScope(line, character))
+                    {
+                        items.Add(new CompletionItem(local.Name, CompletionItemKind.Variable, null));
+                    }
                 }
             }
 

@@ -132,10 +132,7 @@ namespace Lextm.AnsiC
             public override CompoundStatement VisitCompoundStatement([NotNull] CompoundStatementContext context)
             {
                 var list = new BlockItemListVisitor();
-                var scope = new Scope {
-                    Start = new Position { Line = context.Start.Line, Character = context.Start.Column },
-                    End = new Position { Line = context.Stop.Line, Character = context.Stop.Column }
-                };
+                var scope = context.ToScope();
                 if (context.blockItemList() != null)
                 {
                     return new CompoundStatement(list.VisitBlockItemList(context.blockItemList()), scope);
@@ -185,11 +182,7 @@ namespace Lextm.AnsiC
         {
             public override Statement VisitStatement([NotNull] StatementContext context)
             {
-                return new Statement(new Scope 
-                {
-                    Start = new Position { Line = context.Start.Line, Character = context.Start.Column },
-                    End = new Position { Line = context.Stop.Line, Character = context.Stop.Column }
-                });
+                return new Statement(context.ToScope());
             }
         }
 
@@ -242,7 +235,8 @@ namespace Lextm.AnsiC
         {
             public override InitDeclarator VisitInitDeclarator([NotNull] InitDeclaratorContext context)
             {
-                return new InitDeclarator(new DeclaratorVisitor().VisitDeclarator(context.declarator()));
+                return new InitDeclarator(new DeclaratorVisitor().VisitDeclarator(context.declarator()),
+                    context.ToScope());
             }
         }
 
@@ -296,6 +290,18 @@ namespace Lextm.AnsiC
 
                 return base.VisitDirectDeclarator(context);
             }
+        }
+    }
+
+    internal static class ContextExtension
+    {
+        public static Scope ToScope(this ParserRuleContext context)
+        {
+            return new Scope
+            {
+                Start = new Position { Line = context.Start.Line, Character = context.Start.Column },
+                End = new Position { Line = context.Stop.Line, Character = context.Stop.Column }
+            };
         }
     }
 }

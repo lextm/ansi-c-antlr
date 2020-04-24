@@ -2,13 +2,14 @@
 {
     internal class InitDeclarator
     {
-        private Declarator declarator;
-
-        public InitDeclarator(Declarator declarator)
+        public InitDeclarator(Declarator declarator, Scope scope)
         {
-            this.declarator = declarator;
+            Name = declarator.DirectDeclarator.Name;
+            Scope = scope;
         }
 
-        public string Name => declarator.DirectDeclarator.Name;
+        public string Name { get; }
+
+        public Scope Scope { get; }
     }
 }
