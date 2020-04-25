@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using LanguageServer.VsCode.Contracts;
 using Xunit;
 
@@ -22,26 +23,32 @@ namespace Lextm.AnsiC.Tests
 
             {
                 var items = new List<CompletionItem>();
-                Assert.False(document.TriggerCompletion(1, 1, items));
-                Assert.Equal(2, items.Count);
+                document.TriggerCompletion(1, 1, items, CancellationToken.None);
+                Assert.Equal(0, items.Count);
             }
 
             {
                 var items = new List<CompletionItem>();
-                Assert.True(document.TriggerCompletion(5, 5, items));
-                Assert.Equal(2, items.Count);
+                document.TriggerCompletion(5, 5, items, CancellationToken.None);
+                Assert.Equal(1, items.Count);
             }
 
             {
                 var items = new List<CompletionItem>();
-                Assert.True(document.TriggerCompletion(7, 5, items));
+                document.TriggerCompletion(7, 5, items, CancellationToken.None);
+                Assert.Equal(3, items.Count);
+            }
+
+            {
+                var items = new List<CompletionItem>();
+                document.TriggerCompletion(9, 5, items, CancellationToken.None);
                 Assert.Equal(4, items.Count);
             }
 
             {
                 var items = new List<CompletionItem>();
-                Assert.True(document.TriggerCompletion(9, 5, items));
-                Assert.Equal(5, items.Count);
+                document.TriggerCompletion(13, 5, items, CancellationToken.None);
+                Assert.Equal(2, items.Count);
             }
         }
     }

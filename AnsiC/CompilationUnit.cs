@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using LanguageServer.VsCode.Contracts;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Lextm.AnsiC
 {
@@ -33,21 +34,18 @@ namespace Lextm.AnsiC
             return false;
         }
 
-        public bool TriggerCompletion(int line, int character, List<CompletionItem> items)
+        public void TriggerCompletion(int line, int character, List<CompletionItem> items, CancellationToken token)
         {
-            var found = false;
+            // TODO: add include symbols.
             foreach (var method in Functions)
             {
-                items.Add(new CompletionItem(method.Name, CompletionItemKind.Method, null));
-                if (found)
+                if (token.IsCancellationRequested)
                 {
-                    continue;
+                    break;
                 }
 
-                found |= method.TriggerLocalVariables(line, character, items);
+                method.TriggerCompletion(line, character, items, token);
             }
-
-            return found;
         }
     }
 }

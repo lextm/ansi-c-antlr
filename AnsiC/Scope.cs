@@ -3,11 +3,11 @@ namespace Lextm.AnsiC
     public struct Scope
     {
         public Position Start;
-        public Position End;
+        public Position? End;
 
         public bool InScope(int line, int character)
         {
-            if (line < Start.Line || line > End.Line)
+            if (line < Start.Line || (End != null && line > End.Value.Line))
             {
                 return false;
             }
@@ -17,7 +17,7 @@ namespace Lextm.AnsiC
                 return false;
             }
 
-            if (line == End.Line && character > End.Character)
+            if (End != null && line == End.Value.Line && character > End.Value.Character)
             {
                 return false;
             }

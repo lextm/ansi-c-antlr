@@ -64,7 +64,7 @@ namespace Lextm.ReStructuredText.LanguageServer.Services
         {
             var doc = Session.DocumentStates[textDocument.Uri];
             await doc.AnalyzeAsync(ct);
-            return Session.Project.GetCompletionList(doc, position);
+            return Session.Project.GetCompletionList(doc, position, ct);
         }
     }
 }

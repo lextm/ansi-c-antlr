@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using LanguageServer.VsCode.Contracts;
 
 namespace Lextm.AnsiC
@@ -9,6 +10,9 @@ namespace Lextm.AnsiC
         {
             Name = declarator.DirectDeclarator.Name;
             BodyScope = statement.Scope;
+            Scope = new Scope {
+                Start = statement.Scope.Start
+            };
             foreach (var blockItem in statement.Lists)
             {
                 if (blockItem is Declaration declaration)
@@ -23,24 +27,35 @@ namespace Lextm.AnsiC
 
         public string Name { get; }
         public Scope BodyScope { get; }
+        public Scope Scope { get; }
         public IList<LocalVariable> LocalVariables { get; } = new List<LocalVariable>();
 
-        internal bool TriggerLocalVariables(int line, int character, List<CompletionItem> items)
+        internal void TriggerCompletion(int line, int character, List<CompletionItem> items, CancellationToken token)
         {
-            // TODO: should remove {} from scope.
-            var inScope = BodyScope.InScope(line, character);
-            if (inScope)
+            if (Scope.InScope(line, character))
             {
-                foreach (var local in LocalVariables)
-                {
-                    if (local.Scope.InScope(line, character))
-                    {
-                        items.Add(new CompletionItem(local.Name, CompletionItemKind.Variable, null));
-                    }
-                }
+                items.Add(new CompletionItem(Name, CompletionItemKind.Method, null));
             }
 
-            return inScope;
+            // TODO: should remove {} from scope.
+            var inScope = BodyScope.InScope(line, character);
+            if (!inScope)
+            {
+                return;
+            }
+
+            foreach (var local in LocalVariables)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                if (local.Scope.InScope(line, character))
+                {
+                    items.Add(new CompletionItem(local.Name, CompletionItemKind.Variable, null));
+                }
+            }
         }
     }
 }

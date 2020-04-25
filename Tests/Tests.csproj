@@ -4,6 +4,34 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Lextm.AnsiC.Tests</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="AnsiCClient.cs" />
+    <Compile Remove="AnsiCContentType.cs" />
+    <Compile Remove="Class2.cs" />
+    <Compile Remove="Class3.cs" />
+    <Compile Remove="Class4.cs" />
+    <Compile Remove="Class5.cs" />
+    <Compile Remove="Class6.cs" />
+    <Compile Remove="Class7.cs" />
+    <Compile Remove="Class8.cs" />
+    <Compile Remove="Class9.cs" />
+    <Compile Remove="CodeCompletionContext.cs" />
+    <Compile Remove="DiagnosticsEventArgs.cs" />
+    <Compile Remove="DocumentToOpen.cs" />
+    <Compile Remove="LanguageClientSession.cs" />
+    <Compile Remove="LanguageServer.cs" />
+    <Compile Remove="Microsoft.VisualStudio.LanguageServer.Client\CodeRemoteContentDefinition.cs" />
+    <Compile Remove="Microsoft.VisualStudio.LanguageServer.Client\Connection.cs" />
+    <Compile Remove="Microsoft.VisualStudio.LanguageServer.Client\ILanguageClient.cs" />
+    <Compile Remove="Microsoft.VisualStudio.LanguageServer.Client\ILanguageClientCompletionProvider.cs" />
+    <Compile Remove="Microsoft.VisualStudio.LanguageServer.Client\ILanguageClientCustomMessage.cs" />
+    <Compile Remove="Microsoft.VisualStudio.LanguageServer.Client\ILanguageClientExecuteCommandProvider.cs" />
+    <Compile Remove="Microsoft.VisualStudio.LanguageServer.Client\ILanguageClientWorkspaceSymbolProvider.cs" />
+    <Compile Remove="SumTypeExtensions.cs" />
+    <Compile Remove="TaskExtensions.cs" />
+    <Compile Remove="TextDocumentIdentifierFactory.cs" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="xunit">
       <Version>2.3.1</Version>
@@ -20,5 +48,8 @@
     <None Update="Input\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Microsoft.VisualStudio.LanguageServer.Client\" />
   </ItemGroup>
 </Project>

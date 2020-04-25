@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Server;
 
@@ -35,7 +36,7 @@ namespace Lextm.ReStructuredText.LanguageServer
             return null;
         }
 
-        public CompletionList GetCompletionList(DocumentState textDocument, Position position)
+        public CompletionList GetCompletionList(DocumentState textDocument, Position position, CancellationToken token)
         {
             var document = textDocument.LintedDocument;
             if (document.TriggerDocumentList(position.Line, position.Character))
@@ -58,12 +59,8 @@ namespace Lextm.ReStructuredText.LanguageServer
             }
 
             var items = new List<CompletionItem>();
-            if (document.TriggerCompletion(position.Line, position.Character, items))
-            {
-                return new CompletionList(items, true);
-            }
-
-            return new CompletionList();
+            document.TriggerCompletion(position.Line, position.Character, items, token);
+            return new CompletionList(items, true);
         }
 
         private string GetPath(string file)

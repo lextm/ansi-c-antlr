@@ -8,7 +8,7 @@ namespace Lextm.AnsiC
         {
             Name = variable.Name;
             Scope = new Scope {
-                Start = variable.Scope.End,
+                Start = variable.Scope.End.Value,
                 End = methodScope.End
             };
         }
