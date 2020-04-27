@@ -37,6 +37,7 @@ namespace Lextm.AnsiC
         public void TriggerCompletion(int line, int character, List<CompletionItem> items, CancellationToken token)
         {
             // TODO: add include symbols.
+            var inMethod = false;
             foreach (var method in Functions)
             {
                 if (token.IsCancellationRequested)
@@ -45,6 +46,12 @@ namespace Lextm.AnsiC
                 }
 
                 method.TriggerCompletion(line, character, items, token);
+                inMethod |= method.BodyScope.InScope(line, character);
+            }
+
+            if (!inMethod)
+            {
+                items.Clear();
             }
         }
     }

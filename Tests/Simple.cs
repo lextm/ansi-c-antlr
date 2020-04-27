@@ -53,6 +53,12 @@ namespace Lextm.AnsiC.Tests
 
             {
                 var items = new List<CompletionItem>();
+                document.TriggerCompletion(10, 5, items, CancellationToken.None);
+                Assert.Empty(items);
+            }
+
+            {
+                var items = new List<CompletionItem>();
                 document.TriggerCompletion(12, 5, items, CancellationToken.None);
                 Assert.Equal(2, items.Count);
             }
