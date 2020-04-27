@@ -9,9 +9,17 @@ namespace Lextm.AnsiC
         public FunctionDefinition(Declarator declarator, CompoundStatement statement)
         {
             Name = declarator.DirectDeclarator.Name;
-            BodyScope = statement.Scope;
+            BodyScope = new Scope
+            {
+                Start = new Position
+                {
+                    Row = statement.Scope.Start.Row,
+                    Column = statement.Scope.Start.Column + 2
+                },
+                End = statement.Scope.End
+            };
             Scope = new Scope {
-                Start = statement.Scope.Start
+                Start = BodyScope.Start
             };
             foreach (var blockItem in statement.Lists)
             {

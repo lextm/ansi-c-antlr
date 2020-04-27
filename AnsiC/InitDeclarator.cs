@@ -10,6 +10,15 @@
 
         public string Name { get; }
 
-        public Scope Scope { get; }
+        public Scope Scope { get; private set; }
+
+        internal void OverrideScope(Scope scope)
+        {
+            Scope = new Scope
+            {
+                Start = Scope.Start,
+                End = scope.End
+            };
+        }
     }
 }

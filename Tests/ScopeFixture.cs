@@ -10,8 +10,8 @@ namespace Lextm.AnsiC.Tests
         public void Normal()
         {
             var scope = new Scope {
-                Start = new Position { Line = 5, Character = 10 },
-                End = new Position { Line = 9, Character = 5}
+                Start = new Position { Row = 5, Column = 10 },
+                End = new Position { Row = 9, Column = 5}
             };
 
             Assert.False(scope.InScope(0, 0));
@@ -24,7 +24,7 @@ namespace Lextm.AnsiC.Tests
         public void Function()
         {
             var scope = new Scope {
-                Start = new Position { Line = 5, Character = 10 }
+                Start = new Position { Row = 5, Column = 10 }
             };
 
             Assert.False(scope.InScope(0, 0));

@@ -23,31 +23,37 @@ namespace Lextm.AnsiC.Tests
 
             {
                 var items = new List<CompletionItem>();
-                document.TriggerCompletion(1, 1, items, CancellationToken.None);
-                Assert.Equal(0, items.Count);
+                document.TriggerCompletion(3, 12, items, CancellationToken.None);
+                Assert.Empty(items);
             }
 
             {
                 var items = new List<CompletionItem>();
-                document.TriggerCompletion(5, 5, items, CancellationToken.None);
-                Assert.Equal(1, items.Count);
+                document.TriggerCompletion(3, 13, items, CancellationToken.None);
+                Assert.Single(items); // main
             }
 
             {
                 var items = new List<CompletionItem>();
-                document.TriggerCompletion(7, 5, items, CancellationToken.None);
-                Assert.Equal(3, items.Count);
+                document.TriggerCompletion(4, 22, items, CancellationToken.None);
+                Assert.Single(items); // main
             }
 
             {
                 var items = new List<CompletionItem>();
-                document.TriggerCompletion(9, 5, items, CancellationToken.None);
+                document.TriggerCompletion(4, 23, items, CancellationToken.None);
+                Assert.Equal(3, items.Count); // main, result, code
+            }
+
+            {
+                var items = new List<CompletionItem>();
+                document.TriggerCompletion(8, 5, items, CancellationToken.None);
                 Assert.Equal(4, items.Count);
             }
 
             {
                 var items = new List<CompletionItem>();
-                document.TriggerCompletion(13, 5, items, CancellationToken.None);
+                document.TriggerCompletion(12, 5, items, CancellationToken.None);
                 Assert.Equal(2, items.Count);
             }
         }

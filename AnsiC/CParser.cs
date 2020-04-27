@@ -227,6 +227,12 @@ namespace Lextm.AnsiC
                 }
 
                 result.Add(new InitDeclaratorVisitor().VisitInitDeclarator(context.initDeclarator()));
+                var shared = context.ToScope();
+                foreach (var variable in result)
+                {
+                    variable.OverrideScope(shared);
+                }
+
                 return result;
             }
         }
@@ -299,8 +305,8 @@ namespace Lextm.AnsiC
         {
             return new Scope
             {
-                Start = new Position { Line = context.Start.Line, Character = context.Start.Column },
-                End = new Position { Line = context.Stop.Line, Character = context.Stop.Column }
+                Start = new Position { Row = context.Start.Line - 1, Column = context.Start.Column },
+                End = new Position { Row = context.Stop.Line - 1, Column = context.Stop.Column }
             };
         }
     }

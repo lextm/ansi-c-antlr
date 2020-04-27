@@ -7,17 +7,17 @@ namespace Lextm.AnsiC
 
         public bool InScope(int line, int character)
         {
-            if (line < Start.Line || (End != null && line > End.Value.Line))
+            if (line < Start.Row || (End != null && line > End.Value.Row))
             {
                 return false;
             }
 
-            if (line == Start.Line && character < Start.Character)
+            if (line == Start.Row && character < Start.Column)
             {
                 return false;
             }
 
-            if (End != null && line == End.Value.Line && character > End.Value.Character)
+            if (End != null && line == End.Value.Row && character > End.Value.Column)
             {
                 return false;
             }
