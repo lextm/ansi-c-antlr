@@ -18,17 +18,17 @@ namespace Lextm.AnsiC
 
         public static CompilationUnit ParseDocument(string fileName)
         {
-            return ParseContent(File.ReadAllText(fileName));
+            return ParseContent(File.ReadAllText(fileName), fileName);
         }
 
-        public static CompilationUnit ParseContent(string text)
+        public static CompilationUnit ParseContent(string text, string fileName)
         {
             try
             {
                 var lexer = new CLexer(new AntlrInputStream('\n' + text));
                 var tokens = new CommonTokenStream(lexer);
                 var parser = new CParser(tokens);
-                CompilationUnitVisitor visitor = new CompilationUnitVisitor(tokens);
+                CompilationUnitVisitor visitor = new CompilationUnitVisitor(tokens, fileName);
                 return visitor.Visit(parser.compilationUnit());
             }
             catch (RecognitionException)
@@ -44,10 +44,12 @@ namespace Lextm.AnsiC
         class CompilationUnitVisitor : CParserBaseVisitor<CompilationUnit>
         {
             private CommonTokenStream tokens;
+            private readonly string fileName;
 
-            public CompilationUnitVisitor(CommonTokenStream tokens)
+            public CompilationUnitVisitor(CommonTokenStream tokens, string fileName)
             {
                 this.tokens = tokens;
+                this.fileName = fileName;
             }
 
             public override CompilationUnit VisitCompilationUnit([NotNull] CompilationUnitContext context)
@@ -59,7 +61,7 @@ namespace Lextm.AnsiC
                 var channel = tokens.GetHiddenTokensToLeft(index, CLexer.INCLUDE);
                 if (channel != null)
                 {
-                    result.Process(channel);
+                    result.Process(channel, fileName);
                 }
 
                 var translationUnit = context.translationUnit();

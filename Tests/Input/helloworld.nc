@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include "test.nc"
 
 int main() {
     int result, code = 1;

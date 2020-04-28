@@ -10,8 +10,13 @@ namespace Lextm.AnsiC.Tests
         [Fact]
         public void HelloWorld()
         {
-            var document = TestUtils.Test("helloworld");
+            var document = TestUtils.Test("helloworld.nc");
             Assert.NotNull(document);
+
+            Assert.Single(document.Includes);
+            var include = document.Includes[0];
+            Assert.EndsWith("test.nc", include.FileName);
+
             Assert.Equal(2, document.Functions.Count);
             FunctionDefinition main = document.Functions[0];
             Assert.Equal("main", main.Name);
@@ -56,25 +61,25 @@ namespace Lextm.AnsiC.Tests
             {
                 var items = new List<CompletionItem>();
                 document.TriggerCompletion(2, 12, items, CancellationToken.None);
-                Assert.Single(items); // main
+                Assert.Equal(2, items.Count); // main
             }
 
             {
                 var items = new List<CompletionItem>();
                 document.TriggerCompletion(3, 21, items, CancellationToken.None);
-                Assert.Single(items); // main
+                Assert.Equal(2, items.Count); // main
             }
 
             {
                 var items = new List<CompletionItem>();
                 document.TriggerCompletion(3, 22, items, CancellationToken.None);
-                Assert.Equal(3, items.Count); // main, result, code
+                Assert.Equal(4, items.Count); // main, result, code
             }
 
             {
                 var items = new List<CompletionItem>();
                 document.TriggerCompletion(7, 4, items, CancellationToken.None);
-                Assert.Equal(4, items.Count);
+                Assert.Equal(5, items.Count);
             }
 
             {
@@ -86,7 +91,7 @@ namespace Lextm.AnsiC.Tests
             {
                 var items = new List<CompletionItem>();
                 document.TriggerCompletion(11, 5, items, CancellationToken.None);
-                Assert.Equal(2, items.Count);
+                Assert.Equal(3, items.Count);
             }
         }
     }

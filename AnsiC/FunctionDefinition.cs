@@ -45,7 +45,6 @@ namespace Lextm.AnsiC
                 items.Add(new CompletionItem(Name, CompletionItemKind.Method, null));
             }
 
-            // TODO: should remove {} from scope.
             var inScope = BodyScope.InScope(line, character);
             if (!inScope)
             {

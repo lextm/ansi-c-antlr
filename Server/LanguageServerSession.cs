@@ -165,7 +165,7 @@ namespace Lextm.ReStructuredText.LanguageServer
             //await DocumentLinter.AnalyzeAsync(ct);
             //if (LintedDocument == null || TextDocument.)
             {
-                LintedDocument = CParser.ParseContent(TextDocument.Content);
+                LintedDocument = CParser.ParseContent(TextDocument.Content, TextDocument.Uri.LocalPath);
             }
         }
 
@@ -336,7 +336,7 @@ namespace Lextm.ReStructuredText.LanguageServer
                         //Owner.Logger.LogDebug(0, "Start analyzing {document}.", Owner.TextDocument.Uri);
                         var doc = Owner.TextDocument;
                         //var linted = Owner.WikitextLinter.Lint(doc, ct);
-                        var linted = CParser.ParseContent(doc.Content);
+                        var linted = CParser.ParseContent(doc.Content, doc.Uri.LocalPath);
                         // document has been changed!
                         // then just wait for another RequestLint()
                         if (doc != Owner.TextDocument) continue;
