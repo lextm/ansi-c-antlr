@@ -13,8 +13,8 @@ namespace Lextm.AnsiC
             {
                 Start = new Position
                 {
-                    Row = statement.Scope.Start.Row,
-                    Column = statement.Scope.Start.Column + 2
+                    Line = statement.Scope.Start.Line,
+                    Character = statement.Scope.Start.Character + 1
                 },
                 End = statement.Scope.End
             };

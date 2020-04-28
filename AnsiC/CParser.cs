@@ -298,16 +298,4 @@ namespace Lextm.AnsiC
             }
         }
     }
-
-    internal static class ContextExtension
-    {
-        public static Scope ToScope(this ParserRuleContext context)
-        {
-            return new Scope
-            {
-                Start = new Position { Row = context.Start.Line - 1, Column = context.Start.Column },
-                End = new Position { Row = context.Stop.Line - 1, Column = context.Stop.Column }
-            };
-        }
-    }
 }

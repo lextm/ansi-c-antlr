@@ -1,4 +1,6 @@
-﻿namespace Lextm.AnsiC
+﻿using LanguageServer.VsCode.Contracts;
+
+namespace Lextm.AnsiC
 {
     internal class InitDeclarator
     {
@@ -16,8 +18,8 @@
         {
             Scope = new Scope
             {
-                Start = Scope.Start,
-                End = scope.End
+                Start = scope.Start,
+                End = new Position(scope.End.Value.Line, scope.End.Value.Character - 1)
             };
         }
     }

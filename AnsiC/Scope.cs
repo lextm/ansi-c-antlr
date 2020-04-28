@@ -1,3 +1,5 @@
+using LanguageServer.VsCode.Contracts;
+
 namespace Lextm.AnsiC
 {
     public struct Scope
@@ -7,17 +9,17 @@ namespace Lextm.AnsiC
 
         public bool InScope(int line, int character)
         {
-            if (line < Start.Row || (End != null && line > End.Value.Row))
+            if (line < Start.Line || (End != null && line > End.Value.Line))
             {
                 return false;
             }
 
-            if (line == Start.Row && character < Start.Column)
+            if (line == Start.Line && character < Start.Character)
             {
                 return false;
             }
 
-            if (End != null && line == End.Value.Row && character > End.Value.Column)
+            if (End != null && line == End.Value.Line && character > End.Value.Character)
             {
                 return false;
             }
