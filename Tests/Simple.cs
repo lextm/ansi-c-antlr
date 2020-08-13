@@ -10,12 +10,13 @@ namespace Lextm.AnsiC.Tests
         [Fact]
         public void HelloWorld()
         {
-            var document = TestUtils.Test("helloworld.nc");
+            var project = new CProject();
+            var document = TestUtils.Test("helloworld.c", project);
             Assert.NotNull(document);
 
             Assert.Single(document.Includes);
             var include = document.Includes[0];
-            Assert.EndsWith("test.nc", include.FileName);
+            Assert.EndsWith("test.c", include.FileName);
 
             Assert.Equal(2, document.Functions.Count);
             FunctionDefinition main = document.Functions[0];

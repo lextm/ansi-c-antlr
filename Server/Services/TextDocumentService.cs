@@ -5,7 +5,7 @@ using JsonRpc.Contracts;
 using LanguageServer.VsCode;
 using LanguageServer.VsCode.Contracts;
 
-namespace Lextm.ReStructuredText.LanguageServer.Services
+namespace Lextm.AnsiC.LanguageServer.Services
 {
     [JsonRpcScope(MethodPrefix = "textDocument/")]
     public class TextDocumentService : LanguageServiceBase
@@ -63,7 +63,7 @@ namespace Lextm.ReStructuredText.LanguageServer.Services
         public async Task<CompletionList> Completion(TextDocumentIdentifier textDocument, Position position, CompletionContext context, CancellationToken ct)
         {
             var doc = Session.DocumentStates[textDocument.Uri];
-            await doc.AnalyzeAsync(ct);
+            await doc.AnalyzeAsync(ct, null);
             return Session.Project.GetCompletionList(doc, position, ct);
         }
     }

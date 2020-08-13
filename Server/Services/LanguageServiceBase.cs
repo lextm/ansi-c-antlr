@@ -1,6 +1,6 @@
 ﻿using JsonRpc.Server;
 
-namespace Lextm.ReStructuredText.LanguageServer.Services
+namespace Lextm.AnsiC.LanguageServer.Services
 {
     public class LanguageServiceBase : JsonRpcService
     {

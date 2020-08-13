@@ -16,19 +16,19 @@ namespace Lextm.AnsiC
             return document;
         }
 
-        public static CompilationUnit ParseDocument(string fileName)
+        public static CompilationUnit ParseDocument(string fileName, CProject project)
         {
-            return ParseContent(File.ReadAllText(fileName), fileName);
+            return ParseContent(File.ReadAllText(fileName), fileName, project);
         }
 
-        public static CompilationUnit ParseContent(string text, string fileName)
+        public static CompilationUnit ParseContent(string text, string fileName, CProject project)
         {
             try
             {
                 var lexer = new CLexer(new AntlrInputStream('\n' + text));
                 var tokens = new CommonTokenStream(lexer);
                 var parser = new CParser(tokens);
-                CompilationUnitVisitor visitor = new CompilationUnitVisitor(tokens, fileName);
+                CompilationUnitVisitor visitor = new CompilationUnitVisitor(tokens, fileName, project);
                 return visitor.Visit(parser.compilationUnit());
             }
             catch (RecognitionException)
@@ -45,16 +45,18 @@ namespace Lextm.AnsiC
         {
             private CommonTokenStream tokens;
             private readonly string fileName;
+            private CProject project;
 
-            public CompilationUnitVisitor(CommonTokenStream tokens, string fileName)
+            public CompilationUnitVisitor(CommonTokenStream tokens, string fileName, CProject project)
             {
                 this.tokens = tokens;
                 this.fileName = fileName;
+                this.project = project;
             }
 
             public override CompilationUnit VisitCompilationUnit([NotNull] CompilationUnitContext context)
             {
-                var result = new CompilationUnit();
+                var result = new CompilationUnit(project);
 
                 var start = context.Start;
                 var index = start.TokenIndex;

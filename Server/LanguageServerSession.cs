@@ -13,7 +13,7 @@ using LanguageServer.VsCode.Server;
 using Microsoft.Extensions.Logging;
 using Lextm.AnsiC;
 
-namespace Lextm.ReStructuredText.LanguageServer
+namespace Lextm.AnsiC.LanguageServer
 {
     public class SessionState
     {
@@ -159,13 +159,13 @@ namespace Lextm.ReStructuredText.LanguageServer
         /// <summary>
         /// Apply impending changes to <see cref="LintedDocument"/> right now.
         /// </summary>
-        public async Task AnalyzeAsync(CancellationToken token)
+        public async Task AnalyzeAsync(CancellationToken token, CProject project)
         {
             //await Synchronizer.ApplyChangesAsync();
             //await DocumentLinter.AnalyzeAsync(ct);
             //if (LintedDocument == null || TextDocument.)
             {
-                LintedDocument = CParser.ParseContent(TextDocument.Content, TextDocument.Uri.LocalPath);
+                LintedDocument = CParser.ParseContent(TextDocument.Content, TextDocument.Uri.LocalPath, project);
             }
         }
 
@@ -303,29 +303,29 @@ namespace Lextm.ReStructuredText.LanguageServer
             /// <summary>
             /// Request for linting the document, without any condition.
             /// </summary>
-            public void RequestAnalyze()
+            public void RequestAnalyze(CProject project)
             {
                 Interlocked.Exchange(ref impendingRequests, 1);
                 if (Interlocked.Exchange(ref willLint, 1) == 0)
                 {
-                    Task.Delay(RenderChangesDelay).ContinueWith(t => AnalyzeAsync(CancellationToken.None));
+                    Task.Delay(RenderChangesDelay).ContinueWith(t => AnalyzeAsync(CancellationToken.None, project));
                 }
             }
 
-            public Task AnalyzeAsync(CancellationToken ct)
+            public Task AnalyzeAsync(CancellationToken ct, CProject project)
             {
                 if (ct.IsCancellationRequested) return Task.FromCanceled(ct);
                 lock (syncLock)
                 {
                     if (analyzeTask == null)
                     {
-                        analyzeTask = Task.Factory.StartNew(o => AnalyzeCore((CancellationToken)o), ct, ct);
+                        analyzeTask = Task.Factory.StartNew(o => AnalyzeCore((CancellationToken)o, project), ct, ct);
                     }
                     return analyzeTask;
                 }
             }
 
-            private void AnalyzeCore(CancellationToken ct)
+            private void AnalyzeCore(CancellationToken ct, CProject project)
             {
                 try
                 {
@@ -336,7 +336,7 @@ namespace Lextm.ReStructuredText.LanguageServer
                         //Owner.Logger.LogDebug(0, "Start analyzing {document}.", Owner.TextDocument.Uri);
                         var doc = Owner.TextDocument;
                         //var linted = Owner.WikitextLinter.Lint(doc, ct);
-                        var linted = CParser.ParseContent(doc.Content, doc.Uri.LocalPath);
+                        var linted = CParser.ParseContent(doc.Content, doc.Uri.LocalPath, project);
                         // document has been changed!
                         // then just wait for another RequestLint()
                         if (doc != Owner.TextDocument) continue;

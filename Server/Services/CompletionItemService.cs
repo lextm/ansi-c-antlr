@@ -1,7 +1,7 @@
 ﻿using JsonRpc.Contracts;
 using LanguageServer.VsCode.Contracts;
 
-namespace Lextm.ReStructuredText.LanguageServer.Services
+namespace Lextm.AnsiC.LanguageServer.Services
 {
     [JsonRpcScope(MethodPrefix = "completionItem/")]
     public class CompletionItemService : LanguageServiceBase

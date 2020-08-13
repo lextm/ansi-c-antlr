@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Lextm.ReStructuredText.LanguageServer
+namespace Lextm.AnsiC.LanguageServer
 {
     internal static class Utility
     {

@@ -4,7 +4,7 @@ using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Server;
 using Range = LanguageServer.VsCode.Contracts.Range;
 
-namespace Lextm.ReStructuredText.LanguageServer
+namespace Lextm.AnsiC.LanguageServer
 {
     public class DiagnosticProvider
     {

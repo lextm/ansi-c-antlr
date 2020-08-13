@@ -11,7 +11,7 @@ using JsonRpc.Streams;
 using LanguageServer.VsCode;
 using Microsoft.Extensions.Logging;
 
-namespace Lextm.ReStructuredText.LanguageServer
+namespace Lextm.AnsiC.LanguageServer
 {
     internal class Program
     {

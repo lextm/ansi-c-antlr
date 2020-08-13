@@ -1,9 +1,9 @@
-﻿namespace Lextm.ReStructuredText.LanguageServer
+﻿namespace Lextm.AnsiC.LanguageServer
 {
 
     public class SettingsRoot
     {
-        public AnsiCSettings ReStructuredText { get; set; }
+        public AnsiCSettings AnsiC { get; set; }
     }
 
     public class AnsiCSettings

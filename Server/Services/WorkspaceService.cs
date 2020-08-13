@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using JsonRpc.Contracts;
 using LanguageServer.VsCode.Contracts;
-namespace Lextm.ReStructuredText.LanguageServer.Services
+namespace Lextm.AnsiC.LanguageServer.Services
 {
     [JsonRpcScope(MethodPrefix = "workspace/")]
     public class WorkspaceService : LanguageServiceBase
@@ -11,8 +11,7 @@ namespace Lextm.ReStructuredText.LanguageServer.Services
         [JsonRpcMethod(IsNotification = true)]
         public async Task DidChangeConfiguration(SettingsRoot settings)
         {
-            Session.Settings = settings.ReStructuredText;
-            Session.Project.Refresh(Session.Settings);
+            Session.Settings = settings.AnsiC;
             foreach (var doc in Session.DocumentStates.Values)
             {
                 //Session.Project.RefreshDocument(doc.Document);

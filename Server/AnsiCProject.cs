@@ -6,20 +6,10 @@ using System.Threading;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Server;
 
-namespace Lextm.ReStructuredText.LanguageServer
+namespace Lextm.AnsiC.LanguageServer
 {
     public class AnsiCProject
     {
-        private string _root;
-
-        public void Refresh(AnsiCSettings sessionSettings)
-        {
-            // TODO: check conf.py for include files.
-             var setting = sessionSettings.ConfPath;
-             var workspaceRoot = sessionSettings.WorkspaceRoot;
-             _root = setting.Replace("${workspaceRoot}", workspaceRoot);
-        }
-
         public void RefreshDocument(TextDocument doc)
         {
 //            var key = doc.Uri.ToString();
@@ -43,13 +33,13 @@ namespace Lextm.ReStructuredText.LanguageServer
             {
                 var Files = new Dictionary<string, string>();
                 foreach (string file in Directory.EnumerateFiles(
-                    _root, "*.c", SearchOption.AllDirectories))
+                    WorkspaceRoot, "*.c", SearchOption.AllDirectories))
                 {
                     Files.Add(GetPath(file), file);
                 }
 
                 foreach (string file in Directory.EnumerateFiles(
-                    _root, "*.h", SearchOption.AllDirectories))
+                    WorkspaceRoot, "*.h", SearchOption.AllDirectories))
                 {
                     Files.Add(GetPath(file), file);
                 }
@@ -65,8 +55,10 @@ namespace Lextm.ReStructuredText.LanguageServer
 
         private string GetPath(string file)
         {
-            var part = file.Substring(_root.Length);
+            var part = file.Substring(WorkspaceRoot.Length);
             return part.TrimStart('\\', '/').Replace('\\', '/').Replace(".rst", null).Replace(".rest", null);
         }
+
+        public string WorkspaceRoot { get; set; }
     }
 }

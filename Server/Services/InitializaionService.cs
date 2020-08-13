@@ -7,7 +7,7 @@ using JsonRpc.Server;
 using LanguageServer.VsCode.Contracts;
 using Newtonsoft.Json.Linq;
 
-namespace Lextm.ReStructuredText.LanguageServer.Services
+namespace Lextm.AnsiC.LanguageServer.Services
 {
     public class InitializaionService : LanguageServiceBase
     {
@@ -15,6 +15,7 @@ namespace Lextm.ReStructuredText.LanguageServer.Services
         public InitializeResult Initialize(int processId, Uri rootUri, ClientCapabilities capabilities,
             JToken initializationOptions = null, string trace = null)
         {
+            Session.Project.WorkspaceRoot = new Uri($"file://{rootUri.LocalPath}").LocalPath;
             // inform the language server client of server capabilities.
             return new InitializeResult(new ServerCapabilities
             {

@@ -7,8 +7,14 @@ namespace Lextm.AnsiC
 {
     public class CompilationUnit
     {
+        public CompilationUnit(CProject project)
+        {
+            Project = project;
+        }
+
         public IList<FunctionDefinition> Functions { get; } = new List<FunctionDefinition>();
         public IList<IncludeStatement> Includes { get; } = new List<IncludeStatement>();
+        public CProject Project { get; }
 
         internal void Handle(List<ExternalDelaration> declarations)
         {
@@ -59,7 +65,7 @@ namespace Lextm.AnsiC
                 {
                     if (include.Scope.InScope(line, character))
                     {
-                        var document = CParser.ParseDocument(include.FileName);
+                        var document = Project.GetDocument(include.FileName);
                         foreach (var method in document.Functions)
                         {
                             items.Add(new CompletionItem(method.Name, CompletionItemKind.Method, null));
