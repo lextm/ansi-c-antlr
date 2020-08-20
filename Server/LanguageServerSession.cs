@@ -165,7 +165,9 @@ namespace Lextm.AnsiC.LanguageServer
             //await DocumentLinter.AnalyzeAsync(ct);
             //if (LintedDocument == null || TextDocument.)
             {
-                LintedDocument = CParser.ParseContent(TextDocument.Content, TextDocument.Uri.LocalPath, project);
+                var uri = new Uri("file://" + TextDocument.Uri.LocalPath);
+                var local = uri.LocalPath;
+                LintedDocument = CParser.ParseContent(TextDocument.Content, local, project);
             }
         }
 

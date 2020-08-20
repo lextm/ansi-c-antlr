@@ -63,7 +63,7 @@ namespace Lextm.AnsiC.LanguageServer.Services
         public async Task<CompletionList> Completion(TextDocumentIdentifier textDocument, Position position, CompletionContext context, CancellationToken ct)
         {
             var doc = Session.DocumentStates[textDocument.Uri];
-            await doc.AnalyzeAsync(ct, null);
+            await doc.AnalyzeAsync(ct, new CProject());
             return Session.Project.GetCompletionList(doc, position, ct);
         }
     }

@@ -16,7 +16,7 @@ namespace Lextm.AnsiC.Tests
 
             Assert.Single(document.Includes);
             var include = document.Includes[0];
-            Assert.EndsWith("test.c", include.FileName);
+            Assert.EndsWith("test.h", include.FileName);
 
             Assert.Equal(2, document.Functions.Count);
             FunctionDefinition main = document.Functions[0];
