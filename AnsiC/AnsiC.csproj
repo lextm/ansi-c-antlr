@@ -6,12 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Antlr4">
-      <Version>4.6.5</Version>
-    </PackageReference>
-    <PackageReference Include="Antlr4.Runtime">
-      <Version>4.6.5</Version>
-    </PackageReference>
+    <Antlr4 Include="CLexer.g4" />
+    <Antlr4 Include="CParser.g4">
+      <Error>true</Error>
+      <Listener>false</Listener>
+      <Visitor>true</Visitor>
+      <Package>Lextm.AnsiC</Package>
+      <JavaExec>PATH</JavaExec>
+    </Antlr4>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.0" />
+    <PackageReference Include="Antlr4BuildTasks" Version="12.2.0" PrivateAssets="all" />
     <PackageReference Include="CXuesong.LanguageServer.VsCode" Version="0.3.5" />
   </ItemGroup>
 

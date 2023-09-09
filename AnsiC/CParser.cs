@@ -11,7 +11,7 @@ namespace Lextm.AnsiC
         public ParserRuleContext Parse()
         {
             ErrorHandler = new BailErrorStrategy();
-            Interpreter.PredictionMode = PredictionMode.Sll;
+            Interpreter.PredictionMode = PredictionMode.SLL;
             var document = compilationUnit();
             return document;
         }
