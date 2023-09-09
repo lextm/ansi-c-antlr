@@ -1,5 +1,10 @@
 #Requires -Version 6
 
+If ($IsWindows) {
+    Write-Host "This script can only work on Linux or MacOS."
+    Exit
+}
+
 If (Test-Path output) {
     Remove-Item -Recurse -Force output
 }
